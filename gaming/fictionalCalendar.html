@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fantasy Calendar Generator</title>
+    <!-- Load Tailwind CSS from CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Use Inter font family -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        fantasy: ['Cinzel', 'serif'], // A thematic font for the calendar display
+                    },
+                    colors: {
+                        'parchment': '#f9f6e5',
+                        'deep-ink': '#3a1f10',
+                        'fantasy-gold': '#d4af37',
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Custom Styles for Fantasy Theme */
+        body {
+            background-color: #e5e5d9; /* Lighter background for the app */
+        }
+        .parchment-card {
+            background-color: #f9f6e5;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
+            border: 3px solid #3a1f10;
+        }
+        .fantasy-header {
+            border-bottom: 2px dashed #3a1f10;
+            color: #3a1f10;
+            font-family: 'Cinzel', serif;
+        }
+        /* PRINTING STYLES: Hide inputs and optimize the calendar display */
+        @media print {
+            .controls-panel, .actions-bar {
+                display: none;
+            }
+            body {
+                background: white;
+            }
+            .parchment-card {
+                box-shadow: none;
+                border: none;
+            }
+            .calendar-container {
+                page-break-after: always;
+                page-break-inside: avoid;
+            }
+            .month-grid {
+                page-break-inside: avoid;
+            }
+            /* Set print size to Letter/A4 portrait with minimal margin */
+            @page {
+                size: A4 portrait;
+                margin: 0.5cm;
+            }
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8 font-sans text-deep-ink">
+
+    <div id="app" class="max-w-7xl mx-auto">
+        <header class="text-center mb-8">
+            <h1 class="text-4xl md:text-5xl font-fantasy text-deep-ink font-bold fantasy-header pb-2">
+                Realm Calendar Generator
+            </h1>
+            <p class="text-lg mt-2 text-gray-700">Forge the cycles of your world's celestial bodies.</p>
+        </header>
+
+        <div class="flex flex-col lg:flex-row gap-8">
+            
+            <!-- Controls Panel -->
+            <div class="controls-panel w-full lg:w-1/3 parchment-card p-6 rounded-xl space-y-6 shadow-lg">
+                <h2 class="text-2xl font-fantasy font-semibold mb-4 border-b pb-2 text-fantasy-gold">
+                    I. Calendar Structure
+                </h2>
+
+                <!-- Core Cycle Inputs -->
+                <div class="grid grid-cols-2 gap-4">
+                    <label class="block">
+                        <span class="text-sm font-medium">Months per Year (M)</span>
+                        <input type="number" id="monthsPerYear" value="12" min="1" class="mt-1 block w-full rounded-md border-deep-ink/30 shadow-sm focus:border-fantasy-gold focus:ring focus:ring-fantasy-gold/50 bg-parchment/70 p-2">
+                    </label>
+                    <label class="block">
+                        <span class="text-sm font-medium">Weeks per Month (W)</span>
+                        <input type="number" id="weeksPerMonth" value="4" min="1" class="mt-1 block w-full rounded-md border-deep-ink/30 shadow-sm focus:border-fantasy-gold focus:ring focus:ring-fantasy-gold/50 bg-parchment/70 p-2">
+                    </label>
+                    <label class="block">
+                        <span class="text-sm font-medium">Days per Week (D)</span>
+                        <input type="number" id="daysPerWeek" value="7" min="1" class="mt-1 block w-full rounded-md border-deep-ink/30 shadow-sm focus:border-fantasy-gold focus:ring focus:ring-fantasy-gold/50 bg-parchment/70 p-2">
+                    </label>
+                    <label class="block">
+                        <span class="text-sm font-medium">Intercalary Days (At Year End)</span>
+                        <input type="number" id="intercalaryDays" value="5" min="0" class="mt-1 block w-full rounded-md border-deep-ink/30 shadow-sm focus:border-fantasy-gold focus:ring focus:ring-fantasy-gold/50 bg-parchment/70 p-2">
+                    </label>
+                </div>
+                
+                <!-- Naming & Year Range -->
+                <h3 class="text-xl font-fantasy font-semibold mb-2 pt-4 border-t border-deep-ink/20">
+                    II. Naming & Epoch
+                </h3>
+                <label class="block">
+                    <span class="text-sm font-medium">Day Names (Comma Separated)</span>
+                    <input type="text" id="dayNames" value="Sun, Moon, Star, River, Tree, Stone, Fire" class="mt-1 block w-full rounded-md border-deep-ink/30 shadow-sm focus:border-fantasy-gold focus:ring focus:ring-fantasy-gold/50 bg-parchment/70 p-2">
+                </label>
+                <label class="block">
+                    <span class="text-sm font-medium">Month Names (Comma Separated)</span>
+                    <input type="text" id="monthNames" value="Frostfall, Deepwinter, Dawntide, Verdure, Bloom, Highsun, Hearthfire, Harvest, Shadow, Gloom, Longnight, Yule" class="mt-1 block w-full rounded-md border-deep-ink/30 shadow-sm focus:border-fantasy-gold focus:ring focus:ring-fantasy-gold/50 bg-parchment/70 p-2">
+                </label>
+                 <label class="block">
+                    <span class="text-sm font-medium">Year Title</span>
+                    <input type="text" id="yearTitle" value="The Age of Unity" class="mt-1 block w-full rounded-md border-deep-ink/30 shadow-sm focus:border-fantasy-gold focus:ring focus:ring-fantasy-gold/50 bg-parchment/70 p-2">
+                </label>
+                <div class="grid grid-cols-2 gap-4">
+                    <label class="block">
+                        <span class="text-sm font-medium">Start Year (e.g., 1000)</span>
+                        <input type="number" id="startYear" value="1000" min="1" class="mt-1 block w-full rounded-md border-deep-ink/30 shadow-sm focus:border-fantasy-gold focus:ring focus:ring-fantasy-gold/50 bg-parchment/70 p-2">
+                    </label>
+                     <label class="block">
+                        <span class="text-sm font-medium">End Year (e.g., 1001)</span>
+                        <input type="number" id="endYear" value="1001" min="1" class="mt-1 block w-full rounded-md border-deep-ink/30 shadow-sm focus:border-fantasy-gold focus:ring focus:ring-fantasy-gold/50 bg-parchment/70 p-2">
+                    </label>
+                </div>
+
+                <!-- Holiday/Event Input -->
+                <h3 class="text-xl font-fantasy font-semibold mb-2 pt-4 border-t border-deep-ink/20">
+                    III. Events & Festivals
+                </h3>
+                <div id="holidaysList" class="space-y-2">
+                    <div class="flex gap-2 items-center holiday-input">
+                        <input type="text" placeholder="Event Name (e.g., Solstice)" data-type="name" class="rounded-md border-deep-ink/30 shadow-sm bg-parchment/70 p-2 flex-grow">
+                        <input type="text" placeholder="Month Day (e.g., 6 15)" data-type="date" class="rounded-md border-deep-ink/30 shadow-sm bg-parchment/70 p-2 w-28">
+                    </div>
+                    <div class="flex gap-2 items-center holiday-input">
+                        <input type="text" placeholder="Festival Day Name" data-type="festival-name" class="rounded-md border-deep-ink/30 shadow-sm bg-parchment/70 p-2 flex-grow">
+                        <span class="text-xs w-28 text-center text-gray-500">Day 1, 2, 3...</span>
+                    </div>
+                </div>
+                <button onclick="addHolidayInput()" class="w-full bg-green-700 hover:bg-green-800 text-white font-bold py-2 px-4 rounded-lg transition duration-150">
+                    + Add Event / Festival
+                </button>
+
+                <!-- Actions -->
+                <div class="actions-bar space-y-3 pt-6 border-t border-deep-ink/20">
+                    <button onclick="generateCalendar()" class="w-full bg-fantasy-gold hover:bg-yellow-700 text-deep-ink font-bold text-xl py-3 px-4 rounded-xl shadow-lg transition duration-150">
+                        GENERATE CALENDAR
+                    </button>
+                    <button onclick="window.print()" class="w-full bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg transition duration-150">
+                        Print to PDF / Page
+                    </button>
+                </div>
+            </div>
+
+            <!-- Calendar Display Area -->
+            <div class="w-full lg:w-2/3">
+                <div id="calendarOutput" class="parchment-card p-6 rounded-xl min-h-[500px] flex items-center justify-center text-center text-gray-500 shadow-lg">
+                    Click 'GENERATE CALENDAR' to view your world's timeline here.
+                </div>
+                <div id="summaryOutput" class="mt-4 text-center text-sm p-4 bg-parchment/50 rounded-xl"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const monthNamesDefault = "Frostfall, Deepwinter, Dawntide, Verdure, Bloom, Highsun, Hearthfire, Harvest, Shadow, Gloom, Longnight, Yule";
+        const dayNamesDefault = "Sun, Moon, Star, River, Tree, Stone, Fire";
+
+        // --- Event Input Management ---
+        window.addHolidayInput = function() {
+            const list = document.getElementById('holidaysList');
+            const newIndex = list.children.length;
+
+            const isFestivalInput = newIndex % 2 !== 0; // Alternate between recurring and festival
+
+            const div = document.createElement('div');
+            div.className = 'flex gap-2 items-center holiday-input';
+            
+            if (isFestivalInput) {
+                div.innerHTML = `
+                    <input type="text" placeholder="Festival Day Name" data-type="festival-name" class="rounded-md border-deep-ink/30 shadow-sm bg-parchment/70 p-2 flex-grow">
+                    <span class="text-xs w-28 text-center text-gray-500">Day ${list.querySelectorAll('[data-type="festival-name"]').length + 1}</span>
+                    <button onclick="this.parentNode.remove()" class="text-red-600 hover:text-red-800 text-lg">&times;</button>
+                `;
+            } else {
+                div.innerHTML = `
+                    <input type="text" placeholder="Event Name (e.g., Solstice)" data-type="name" class="rounded-md border-deep-ink/30 shadow-sm bg-parchment/70 p-2 flex-grow">
+                    <input type="text" placeholder="Month Day (e.g., 6 15)" data-type="date" class="rounded-md border-deep-ink/30 shadow-sm bg-parchment/70 p-2 w-28">
+                    <button onclick="this.parentNode.remove()" class="text-red-600 hover:text-red-800 text-lg">&times;</button>
+                `;
+            }
+
+            list.appendChild(div);
+        }
+
+        // --- Core Calendar Generation ---
+        window.generateCalendar = function() {
+            const monthsPerYear = parseInt(document.getElementById('monthsPerYear').value) || 12;
+            const weeksPerMonth = parseInt(document.getElementById('weeksPerMonth').value) || 4;
+            const daysPerWeek = parseInt(document.getElementById('daysPerWeek').value) || 7;
+            const intercalaryDays = parseInt(document.getElementById('intercalaryDays').value) || 0;
+            const startYear = parseInt(document.getElementById('startYear').value) || 1000;
+            const endYear = parseInt(document.getElementById('endYear').value) || 1001;
+            const yearTitle = document.getElementById('yearTitle').value || "The Age of Unity";
+
+            let monthNames = document.getElementById('monthNames').value.split(',').map(n => n.trim()).filter(n => n);
+            let dayNames = document.getElementById('dayNames').value.split(',').map(n => n.trim()).filter(n => n);
+
+            if (monthNames.length !== monthsPerYear) {
+                // Use default if user didn't provide correct number of names
+                if (monthNames.length === 0) monthNames = monthNamesDefault.split(',').map(n => n.trim());
+                if (monthNames.length < monthsPerYear) {
+                    while (monthNames.length < monthsPerYear) {
+                        monthNames.push(`Month ${monthNames.length + 1}`);
+                    }
+                }
+            }
+            if (dayNames.length !== daysPerWeek) {
+                 if (dayNames.length === 0) dayNames = dayNamesDefault.split(',').map(n => n.trim());
+                if (dayNames.length < daysPerWeek) {
+                    alert("Warning: Number of day names does not match Days per Week. Using generic names.");
+                    dayNames = Array.from({ length: daysPerWeek }, (_, i) => `Day ${i + 1}`);
+                }
+            }
+
+
+            const daysPerMonth = weeksPerMonth * daysPerWeek;
+            const standardDays = monthsPerYear * daysPerMonth;
+            const totalDays = standardDays + intercalaryDays;
+
+            let calendarHTML = '';
+            let currentDayIndex = 0; // Used to track the day of the week
+            let eventMap = getEventsMap(daysPerWeek);
+            let festivalNames = getFestivalNames();
+            let summaryList = [];
+
+            // --- 1. Summary Calculation ---
+            summaryList.push(`Standard Days/Year: <span class="font-bold">${standardDays}</span>`);
+            summaryList.push(`Intercalary Days: <span class="font-bold">${intercalaryDays}</span>`);
+            summaryList.push(`Total Days/Year: <span class="font-bold text-lg text-fantasy-gold">${totalDays}</span>`);
+
+
+            // --- 2. Generate Standard Calendar Months ---
+            for (let y = startYear; y <= endYear; y++) {
+                let yearHTML = `<div class="calendar-year mb-12" id="year-${y}">`;
+                yearHTML += `<h2 class="text-3xl font-fantasy font-bold text-center mb-6 py-2 bg-deep-ink/10 rounded-lg">${yearTitle} ${y}</h2>`;
+                yearHTML += `<div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">`;
+
+                for (let m = 0; m < monthsPerYear; m++) {
+                    const monthName = monthNames[m] || `Month ${m + 1}`;
+                    
+                    yearHTML += `
+                        <div class="month-grid p-4 border border-deep-ink/50 rounded-lg bg-parchment/60">
+                            <h3 class="text-xl font-fantasy font-semibold text-center mb-3 text-fantasy-gold">${monthName}</h3>
+                            <div class="grid grid-cols-${daysPerWeek} gap-1 text-xs font-semibold uppercase text-center border-b pb-1">
+                                ${dayNames.map(day => `<div class="text-xs">${day.substring(0, 3)}</div>`).join('')}
+                            </div>
+                            <div class="grid grid-cols-${daysPerWeek} gap-1 mt-1">
+                    `;
+                    
+                    // Add empty cells for the first week offset (if any)
+                    let firstDayOffset = currentDayIndex % daysPerWeek;
+                    for(let i = 0; i < firstDayOffset; i++) {
+                         yearHTML += `<div></div>`;
+                    }
+
+                    for (let d = 1; d <= daysPerMonth; d++) {
+                        const dayOfWeek = dayNames[currentDayIndex % daysPerWeek];
+                        const event = eventMap[`${m+1} ${d}`];
+                        let dayClasses = 'p-1 text-center rounded-sm transition duration-100';
+                        let eventMarker = '';
+
+                        if (event) {
+                            dayClasses += ' bg-red-400 text-white font-bold cursor-help relative group';
+                            eventMarker = `<span class="absolute top-0 right-0 text-[8px] leading-none">★</span>
+                                <span class="absolute hidden group-hover:block text-xs bg-black text-white p-1 rounded-md z-10 -mt-8 whitespace-nowrap">${event}</span>`;
+                        }
+
+                        yearHTML += `<div class="${dayClasses} text-sm relative">${d}${eventMarker}</div>`;
+                        currentDayIndex++;
+                    }
+
+                    yearHTML += `</div></div>`; // Close month-grid and month-grid-container
+                }
+                
+                yearHTML += `</div>`; // Close grid
+                
+                // --- 3. Intercalary Days (Festivals) ---
+                if (intercalaryDays > 0) {
+                    yearHTML += `
+                        <div class="mt-8">
+                            <h3 class="text-2xl font-fantasy font-semibold text-center mb-4 text-deep-ink">Intercalary Festival Days</h3>
+                            <div class="flex flex-wrap justify-center gap-4 text-center">
+                    `;
+                    for (let i = 0; i < intercalaryDays; i++) {
+                        const festivalName = festivalNames[i] || `Festival Day ${i + 1}`;
+                        yearHTML += `<div class="p-3 bg-fantasy-gold/50 border border-fantasy-gold rounded-full shadow-md">
+                            <p class="text-lg font-bold">${festivalName}</p>
+                            <p class="text-xs text-deep-ink/70">Day ${i + 1} of Festival</p>
+                        </div>`;
+                        currentDayIndex++; // These days advance the total day count but not the month/week count
+                    }
+                    yearHTML += `</div></div>`;
+                }
+
+                yearHTML += `</div>`; // Close calendar-year
+                calendarHTML += yearHTML;
+            }
+
+            document.getElementById('calendarOutput').innerHTML = calendarHTML;
+            document.getElementById('summaryOutput').innerHTML = `
+                <h4 class="font-bold text-lg mb-2">Year Summary</h4>
+                ${summaryList.map(s => `<p>${s}</p>`).join('')}
+            `;
+        }
+
+        // --- Helper Functions ---
+
+        function getEventsMap(daysPerWeek) {
+            const map = {}; // Key: "Month Day" (e.g., "6 15")
+            const holidayInputs = document.querySelectorAll('.holiday-input');
+            
+            holidayInputs.forEach(inputDiv => {
+                const nameInput = inputDiv.querySelector('[data-type="name"]');
+                const dateInput = inputDiv.querySelector('[data-type="date"]');
+
+                if (nameInput && nameInput.value && dateInput && dateInput.value) {
+                    const dateParts = dateInput.value.trim().split(/\s+/);
+                    if (dateParts.length === 2) {
+                        const key = `${parseInt(dateParts[0])} ${parseInt(dateParts[1])}`;
+                        map[key] = nameInput.value.trim();
+                    }
+                }
+            });
+
+            return map;
+        }
+
+        function getFestivalNames() {
+            const names = [];
+            const festivalInputs = document.querySelectorAll('[data-type="festival-name"]');
+            festivalInputs.forEach(input => {
+                if (input.value) {
+                    names.push(input.value.trim());
+                }
+            });
+            return names;
+        }
+
+        // Initialize with default events
+        document.addEventListener('DOMContentLoaded', () => {
+            // Add default holiday
+            const firstHoliday = document.querySelector('.holiday-input:first-child [data-type="name"]');
+            const firstDate = document.querySelector('.holiday-input:first-child [data-type="date"]');
+            if(firstHoliday) firstHoliday.value = "Great Solstice";
+            if(firstDate) firstDate.value = "6 1";
+            
+            // Add default festival day
+            const firstFestival = document.querySelector('.holiday-input:nth-child(2) [data-type="festival-name"]');
+            if(firstFestival) firstFestival.value = "Feast of the Moon";
+            
+            // Add initial placeholder events
+            addHolidayInput(); 
+            addHolidayInput(); 
+            addHolidayInput(); 
+        });
+    </script>
+</body>
+</html>
