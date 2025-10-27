@@ -57,22 +57,28 @@ button {
 
     /* Force landscape orientation */
     @page {
-        size: landscape;
-        margin: 0.25in; /* Smaller margins for max space */
+        size: landscape !important;
+        margin: 0 !important; /* Smaller margins for max space */
+        padding: 0 !important;
     }
 
     /* The print list container (this is the content that moves) */
     .list-container {
         display: block !important; /* Make sure it shows up for printing */
         position: absolute;
-        width: 50vw; /* 50% of viewport width (landscape page) */
-        height: 33.33vh; /* 33.33% of viewport height (landscape page) */
+        width: 50% !important; /* 50% of viewport width (landscape page) */
+        height: 33.33% !important; /* 33.33% of viewport height (landscape page) */
         margin: 0;
-        padding: 5px;
+        padding: 0;
         box-sizing: border-box;
         overflow: hidden; /* Prevent text from spilling into next segment */
         font-family: monospace; /* Monospace for consistent line height */
         font-size: 10pt; /* Small font to fit 35 lines */
+    }
+
+    /* FIX 2: Ensure list items are visible */
+    .list-item {
+        display: flex !important;
     }
     
     /* Hide the checkboxes on the printed page */
@@ -82,9 +88,9 @@ button {
 
     /* Set up the six positions using top/left percentage offsets */
     .segment-1 { top: 0; left: 0; }
-    .segment-2 { top: 0; left: 50vw; }
-    .segment-3 { top: 33.33vh; left: 0; }
-    .segment-4 { top: 33.33vh; left: 50vw; }
-    .segment-5 { top: 66.66vh; left: 0; }
-    .segment-6 { top: 66.66vh; left: 50vw; }
+    .segment-2 { top: 0; left: 50%; }
+    .segment-3 { top: 33.33%; left: 0; }
+    .segment-4 { top: 33.33%; left: 50%; }
+    .segment-5 { top: 66.66%; left: 0; }
+    .segment-6 { top: 66.66%; left: 50%; }
 }
