@@ -232,7 +232,7 @@ window.printSegment = function(segmentNumber) {
     listContainer.classList.add(`segment-${segmentNumber}`);
     
     (function() {
-        window.print();
+        window.print(); 
     })();
 
     setTimeout(() => {
@@ -255,8 +255,8 @@ window.lazyPrintAll = function() {
     const printContent = document.createElement('div');
     printContent.className = 'print-page';
 
-    // 3. Generate six UNIQUE randomized lists
-    for (let i = 1; i <= 6; i++) {
+    // 3. Generate 4 UNIQUE randomized lists
+    for (let i = 1; i <= 4; i++) {
         // Shuffle the list of names *freshly* for each segment
         const shuffledNames = shuffleList(studentNames);
         
