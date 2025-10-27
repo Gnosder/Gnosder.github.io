@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class Random Picker Tool</title>
+    <link rel="stylesheet" href="../assets/css/global.css">
+    <link rel="stylesheet" href="../assets/css/toolbox.css">
+</head>
+<body>
+
+    <div class="app-container">
+        <h1>Random Student Picker Tool</h1>
+
+        <section class="list-management">
+            <h2>List Management</h2>
+            <input type="text" id="listNameInput" placeholder="Enter Class Name (e.g., 'Period 1 Math')">
+            <button onclick="saveCurrentList()">Save Current List</button>
+            <select id="listSelector" onchange="loadSelectedList()">
+                <option value="">-- Load a Saved List --</option>
+            </select>
+            <button onclick="deleteSelectedList()">Delete Selected List</button>
+        </section>
+
+        <hr>
+
+        <section class="controls">
+            <textarea id="nameInput" placeholder="Paste or type one name per line..."></textarea>
+            <button onclick="initialShuffle()">1. Shuffle & Display (Updates list in memory)</button>
+        </section>
+
+        <section class="list-display">
+            <h2>Current List: <span id="currentListName">[Unsaved List]</span></h2>
+            <div id="listContainer" class="list-container">
+                </div>
+        </section>
+
+        <section class="actions">
+            <div class="regeneration-buttons">
+                <button onclick="regenerateList()">2. Generate New List (Prioritize Unchecked)</button>
+            </div>
+
+            <div class="print-controls">
+                <h3>3. Printing Options (6-Segment Layout)</h3>
+                <div class="print-segments">
+                    <button onclick="printSegment(1)">Print to Segment 1 (Top Left)</button>
+                    <button onclick="printSegment(2)">Print to Segment 2 (Top Right)</button>
+                    <button onclick="printSegment(3)">Print to Segment 3 (Middle Left)</button>
+                    <button onclick="printSegment(4)">Print to Segment 4 (Middle Right)</button>
+                    <button onclick="printSegment(5)">Print to Segment 5 (Bottom Left)</button>
+                    <button onclick="printSegment(6)">Print to Segment 6 (Bottom Right)</button>
+                </div>
+                <button onclick="lazyPrintAll()" class="lazy-print-button">LAZY PRINT: Print New List to ALL 6 Segments</button>
+            </div>
+        </section>
+
+        <p class="footer">Note: List state for the *currently displayed* list is saved automatically.</p>
+    </div>
+
+    <script src="../assets/js/global.js"></script>
+    <script src="../assets/js/toolbox.js"></script>
+</body>
+</html>
