@@ -1,0 +1,90 @@
+/* --- Basic App Styling --- */
+textarea {
+    width: 100%;
+    height: 150px;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
+button {
+    padding: 10px 15px;
+    margin: 5px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    background-color: #4CAF50;
+    color: white;
+}
+
+.list-display {
+    margin-top: 20px;
+    border-top: 2px solid #eee;
+    padding-top: 15px;
+}
+
+.list-item {
+    display: flex;
+    align-items: center;
+    padding: 5px 0;
+    border-bottom: 1px dotted #ccc;
+    font-size: 14px;
+}
+
+.list-item input[type="checkbox"] {
+    margin-right: 10px;
+    transform: scale(1.2);
+}
+
+.lazy-print-button {
+    background-color: #007bff;
+    margin-top: 15px;
+    width: 100%;
+}
+
+.print-segments button {
+    background-color: #ff9800;
+}
+
+/* --- PRINTING STYLES --- */
+/* The key to segmenting the page is within this media query */
+@media print {
+    /* Hide all UI elements, keep only the list container */
+    .app-container, .controls, .actions, .footer, h1, h2, h3 {
+        display: none !important;
+    }
+
+    /* Force landscape orientation */
+    @page {
+        size: landscape;
+        margin: 0.25in; /* Smaller margins for max space */
+    }
+
+    /* The print list container (this is the content that moves) */
+    .list-container {
+        display: block !important; /* Make sure it shows up for printing */
+        position: absolute;
+        width: 50vw; /* 50% of viewport width (landscape page) */
+        height: 33.33vh; /* 33.33% of viewport height (landscape page) */
+        margin: 0;
+        padding: 5px;
+        box-sizing: border-box;
+        overflow: hidden; /* Prevent text from spilling into next segment */
+        font-family: monospace; /* Monospace for consistent line height */
+        font-size: 10pt; /* Small font to fit 35 lines */
+    }
+    
+    /* Hide the checkboxes on the printed page */
+    .list-item input[type="checkbox"] {
+        display: none;
+    }
+
+    /* Set up the six positions using top/left percentage offsets */
+    .segment-1 { top: 0; left: 0; }
+    .segment-2 { top: 0; left: 50vw; }
+    .segment-3 { top: 33.33vh; left: 0; }
+    .segment-4 { top: 33.33vh; left: 50vw; }
+    .segment-5 { top: 66.66vh; left: 0; }
+    .segment-6 { top: 66.66vh; left: 50vw; }
+}
