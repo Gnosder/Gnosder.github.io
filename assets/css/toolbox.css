@@ -88,9 +88,9 @@ button {
 
     /* Set up the six positions using top/left percentage offsets */
     .segment-1 { top: 0; left: 0; }
-    .segment-2 { top: 0; left: 50%; }
-    .segment-3 { top: 33.33%; left: 0; }
-    .segment-4 { top: 33.33%; left: 50%; }
-    .segment-5 { top: 66.66%; left: 0; }
-    .segment-6 { top: 66.66%; left: 50%; }
+    .segment-2 { top: 0; left: 33.33%; }
+    .segment-3 { top: 0%; left: 66.66%; }
+    .segment-4 { top: 50%; left: 0%; }
+    .segment-5 { top: 50%; left: 33.33%; }
+    .segment-6 { top: 50%; left: 66.66%; }
 }
