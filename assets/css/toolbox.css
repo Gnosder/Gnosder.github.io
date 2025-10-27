@@ -57,17 +57,18 @@ button {
 
     /* Force landscape orientation */
     @page {
-        size: landscape !important;
-        margin: 0 !important; /* Smaller margins for max space */
-        padding: 0 !important;
+        size: portrait !important;
+        margin: 0px !important; /* Smaller margins for max space */
+        padding: 0px !important;
     }
 
     /* The print list container (this is the content that moves) */
     .list-container {
         display: block !important; /* Make sure it shows up for printing */
         position: absolute;
-        width: 50% !important; /* 50% of viewport width (landscape page) */
-        height: 33.33% !important; /* 33.33% of viewport height (landscape page) */
+        /* NEW DIMENSIONS for 4x1 Columns layout */
+        width: 25% !important; /* 100% divided by 4 segments */
+        height: 100% !important; /* Full height */
         margin: 0;
         padding: 0;
         box-sizing: border-box;
@@ -76,7 +77,7 @@ button {
         font-size: 10pt; /* Small font to fit 35 lines */
     }
 
-    /* FIX 2: Ensure list items are visible */
+    /* Ensure list items are visible */
     .list-item {
         display: flex !important;
     }
@@ -86,11 +87,15 @@ button {
         display: none;
     }
 
-    /* Set up the six positions using top/left percentage offsets */
-    .segment-1 { top: 0; left: 0; }
-    .segment-2 { top: 0; left: 33.33%; }
-    .segment-3 { top: 0%; left: 66.66%; }
-    .segment-4 { top: 50%; left: 0%; }
-    .segment-5 { top: 50%; left: 33.33%; }
-    .segment-6 { top: 50%; left: 66.66%; }
+    /* NEW 4x1 VERTICAL COLUMNS POSITIONS (using a 2% top margin) */
+    .list-container.segment-1 { top: 2%; left: 5%; }    
+    .list-container.segment-2 { top: 2%; left: 30%; }   
+    .list-container.segment-3 { top: 2%; left: 55%; }   
+    .list-container.segment-4 { top: 2%; left: 80%; }   
+    
+    /* HIDE SEGMENTS 5 and 6 */
+    .list-container.segment-5,
+    .list-container.segment-6 {
+        display: none !important;
+    }
 }
