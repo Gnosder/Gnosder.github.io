@@ -3,7 +3,7 @@ My personal portfolio. gnosder.github.io
 
 TODO
 
-[] Revist file structure
+[] Revisit file structure
 
 
 
