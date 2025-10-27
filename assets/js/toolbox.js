@@ -223,21 +223,30 @@ window.regenerateList = function() {
 // --- Printing Functions (Unchanged, work on the current list state) ---
 
 window.printSegment = function(segmentNumber) {
+    // 1. Get the content from the currently displayed list.
     const listContainer = document.getElementById('listContainer');
-    if (listContainer.children.length === 0) {
+    if (!listContainer || listContainer.children.length === 0) {
         alert("Please load or generate a list first.");
         return;
     }
 
-    listContainer.classList.add(`segment-${segmentNumber}`);
-    
-    (function() {
-        window.print(); 
-    })();
+    // 2. Create a temporary print-only container.
+    const printContent = document.createElement('div');
+    printContent.className = 'print-page';
 
-    setTimeout(() => {
-        listContainer.classList.remove(`segment-${segmentNumber}`);
-    }, 500);
+    // 3. Clone the current list HTML (the inner content)
+    //    and wrap it in a div that receives the segment class.
+    const segmentDiv = document.createElement('div');
+    segmentDiv.className = `list-container segment-${segmentNumber}`;
+    segmentDiv.innerHTML = listContainer.innerHTML; // Copy the visible list items
+
+    // 4. Append the segment div to the temporary print container.
+    printContent.appendChild(segmentDiv);
+
+    // 5. Temporarily append to the body, print, and then remove.
+    document.body.appendChild(printContent);
+    window.print();
+    document.body.removeChild(printContent);
 }
 
 window.lazyPrintAll = function() {
