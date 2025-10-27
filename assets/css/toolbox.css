@@ -49,48 +49,73 @@ button {
 
 /* --- PRINTING STYLES --- */
 /* The key to segmenting the page is within this media query */
+/* --- PRINTING STYLES --- */
 @media print {
-    /* Hide all UI elements, keep only the list container */
-    .app-container, .controls, .actions, .footer, h1, h2, h3 {
+    
+    /* 1. HIDE ALL NON-PRINT ELEMENTS */
+    /* Moved h2 to the hiding list for consistency */
+    .app-container, .controls, .actions, .footer, h1, h2, h3, nav {
         display: none !important;
     }
 
-    /* Force landscape orientation */
+    /* Force portrait orientation */
     @page {
         size: portrait !important;
-        margin: 0px !important; /* Smaller margins for max space */
-        padding: 0px !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    /* FIX A: Make the default list-item visible and style its content */
+    /* This rule is essential because when printing a single segment, 
+       the JS copies the visible list items, and we need them to render. */
+    .list-item {
+        display: flex !important; /* Keep your existing flex for consistency */
+        align-items: center !important;
+        padding: 0 5px !important; /* Minimal horizontal padding */
+        border-bottom: none !important; /* No dotted lines on print */
+        font-size: 18pt !important;
+        line-height: 1.1 !important;
+        height: auto !important; /* Allow the height to be determined by content */
     }
 
     /* The print list container (this is the content that moves) */
     .list-container {
-        display: block !important; /* Make sure it shows up for printing */
-        position: absolute;
+        display: block !important; 
+        position: absolute !important; /* Must be !important for single print to work */
+        
         /* NEW DIMENSIONS for 4x1 Columns layout */
-        width: 25% !important; /* 100% divided by 4 segments */
-        height: 100% !important; /* Full height */
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        overflow: hidden; /* Prevent text from spilling into next segment */
-        font-family: monospace; /* Monospace for consistent line height */
-        font-size: 10pt; /* Small font to fit 35 lines */
-    }
-
-    /* Ensure list items are visible */
-    .list-item {
-        display: flex !important;
+        width: 25% !important;
+        height: 100% !important; 
+        margin: 0 !important; /* !important for consistency */
+        padding: 0 !important;
+        box-sizing: border-box !important;
+        overflow: hidden !important; 
+        font-family: monospace !important; 
+        font-size: 18pt !important;
     }
     
-    /* Hide the checkboxes on the printed page */
-    .list-item input[type="checkbox"] {
-        display: none;
+    /* FIX B: The segment position offsets for a centered block of 4 columns */
+    /* Used 5% margin to center the 4 columns across the 100% width. */
+    .list-container.segment-1 { top: 2%; left: 2%; } 
+    .list-container.segment-2 { top: 2%; left: 27%; }   /* 2% + 25% */
+    .list-container.segment-3 { top: 2%; left: 52%; }   /* 2% + 50% */
+    .list-container.segment-4 { top: 2%; left: 77%; }
+    
+    /* Ensure span (the name text) is visible */
+    .list-item span {
+        display: block !important;
+        white-space: pre !important; 
+        font-size: 18pt !important;
     }
 
-    /* NEW 4x1 VERTICAL COLUMNS POSITIONS (using a 2% top margin) */
-    .list-container.segment-1 { top: 2%; left: 5%; }    
-    .list-container.segment-2 { top: 2%; left: 30%; }   
-    .list-container.segment-3 { top: 2%; left: 55%; }   
-    .list-container.segment-4 { top: 2%; left: 80%; }   
+    /* Hide the checkboxes on the printed page */
+    .list-item input[type="checkbox"] {
+        display: none !important;
+    }
+    
+    /* Hide unused segments */
+    .list-container.segment-5,
+    .list-container.segment-6 {
+        display: none !important;
     }
 }
